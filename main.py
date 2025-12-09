@@ -2,6 +2,10 @@ from fastmcp import FastMCP
 import os
 import aiosqlite  # Changed: sqlite3 → aiosqlite
 import tempfile
+import logging
+
+logger = logging.getLogger("ExpenseTracker")
+logging.basicConfig(level=logging.INFO)
 
 # Use temporary directory which should be writable
 TEMP_DIR = tempfile.gettempdir()
@@ -30,9 +34,9 @@ def init_db():  # Keep as sync for initialization
             # Test write access
             c.execute("INSERT OR IGNORE INTO expenses(date, amount, category) VALUES ('2000-01-01', 0, 'test')")
             c.execute("DELETE FROM expenses WHERE category = 'test'")
-            print("Database initialized successfully with write access")
+            logger.info("Database initialized successfully with write access")
     except Exception as e:
-        print(f"Database initialization error: {e}")
+        logger.exception(f"Database initialization error {e}")
         raise
 
 # Initialize database synchronously at module load
@@ -164,4 +168,4 @@ def categories():
 
 # Start the server
 if __name__ == "__main__":
-    mcp.run(transport="http", host="0.0.0.0", port=8000)
+    mcp.run(transport="http", host="127.0.0.1", port=8000)
